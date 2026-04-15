@@ -18,8 +18,13 @@ export class SnippetService {
     return snippet.toJSON();
   }
 
-  async findAll(query: QuerySnippetsDto): Promise<Snippet[]> {
-    const { search, tags } = query;
+  async findAll(query: QuerySnippetsDto) {
+    const { search, tags, page = 1 } = query;
+    let { limit = 10 } = query;
+
+    if (limit > 100) {
+      limit = 100;
+    }
 
     const filter: Record<string, unknown> = {};
 
@@ -31,12 +36,28 @@ export class SnippetService {
       filter.tags = { $in: tags };
     }
 
-    const snippets = await this.snippetModel
-      .find(filter)
-      .sort({ createdAt: -1 })
-      .exec();
+    const skip = (page - 1) * limit;
 
-    return snippets.map((s) => s.toJSON());
+    const [snippets, total] = await Promise.all([
+      this.snippetModel
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+
+      this.snippetModel.countDocuments(filter),
+    ]);
+
+    return {
+      data: snippets.map((s) => s.toJSON()),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findById(id: string): Promise<Snippet> {

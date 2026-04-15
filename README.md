@@ -2,6 +2,9 @@
 
 Snippet Vault is a full-stack monorepo application for managing and organizing code snippets. It features a modern web interface and a robust RESTful API.
 
+> [!NOTE]
+> The live backend is deployed on Render using a free tier. It may take some time (up to 1 minute) to "wake up" on the first request if it has been inactive for a while.
+
 ## Project Structure
 
 This project is a monorepo managed with npm workspaces:

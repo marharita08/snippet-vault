@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
 
 import {
   Button,
@@ -25,13 +24,12 @@ import {
 } from "@/components";
 import { SnippetType } from "@/const/snippet-type";
 import { snippetTypeLabels } from "@/const/snippet-type-labels";
-import { useAppMutation } from "@/hooks/use-app-mutation";
-import { toast } from "@/hooks/use-toast";
+import { useCreateSnippet } from "@/hooks/use-create-snippet";
+import { useUpdateSnippet } from "@/hooks/use-update-snippet";
 import {
   CreateSnippetSchema,
   createSnippetSchema,
 } from "@/schemas/create-snippet.schema";
-import { snippetService } from "@/services/snippet.service";
 import { Snippet } from "@/types/snippet";
 
 interface SnippetDialogProps {
@@ -45,7 +43,6 @@ export const SnippetDialog = ({
   onOpenChange,
   snippet,
 }: SnippetDialogProps) => {
-  const queryClient = useQueryClient();
   const isEdit = !!snippet;
 
   const {
@@ -84,30 +81,14 @@ export const SnippetDialog = ({
     }
   }, [open, snippet, reset]);
 
-  const mutation = useAppMutation(
-    isEdit ? ["update-snippet", snippet?._id] : ["create-snippet"],
-    {
-      mutationFn: (data: CreateSnippetSchema) => {
-        if (isEdit && snippet) {
-          return snippetService.update(snippet._id, data);
-        }
-        return snippetService.create(data);
-      },
-      onSuccess: () => {
-        toast({
-          title: `Snippet ${isEdit ? "updated" : "created"} successfully`,
-          variant: "success",
-        });
-        queryClient.invalidateQueries({ queryKey: ["snippets"] });
-        if (isEdit) {
-          queryClient.invalidateQueries({
-            queryKey: ["snippet", snippet?._id],
-          });
-        }
-        onOpenChange(false);
-      },
-    },
-  );
+  const createMutation = useCreateSnippet({
+    onSuccess: () => onOpenChange(false),
+  });
+  const updateMutation = useUpdateSnippet(snippet?._id || "", {
+    onSuccess: () => onOpenChange(false),
+  });
+
+  const mutation = isEdit ? updateMutation : createMutation;
 
   const onSubmit = (data: CreateSnippetSchema) => {
     mutation.mutate(data);

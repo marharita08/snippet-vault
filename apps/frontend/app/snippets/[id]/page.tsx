@@ -24,8 +24,7 @@ import {
   SnippetDialog,
 } from "@/components";
 import { SnippetType } from "@/const/snippet-type";
-import { useAppQuery } from "@/hooks/use-app-query";
-import { snippetService } from "@/services/snippet.service";
+import { useSnippet } from "@/hooks/use-snippet";
 import { Snippet } from "@/types/snippet";
 import { formatDateFull } from "@/utils/format-date";
 
@@ -98,14 +97,7 @@ export default function SnippetPage({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const {
-    data: snippet,
-    isLoading,
-    isError,
-  } = useAppQuery<Snippet>({
-    queryKey: ["snippet", id],
-    queryFn: () => snippetService.getById(id),
-  });
+  const { data: snippet, isLoading, isError } = useSnippet(id);
 
   return (
     <div className="min-h-screen bg-background">

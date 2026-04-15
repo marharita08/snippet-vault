@@ -39,7 +39,7 @@ const SelectTrigger = React.forwardRef<
           ref={ref}
           id={id}
           className={cn(
-            "flex gap-2 h-[42px] w-full text-body-15 text-neutral-900 items-center justify-between rounded-md border border-input-border hover:border-input-border-hover bg-background px-3 py-2 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 data-[state=open]:border-primary shadow-inner-bottom focus:outline-none group",
+            "cursor-pointer flex gap-2 h-[42px] w-full text-body-15 text-neutral-900 items-center justify-between rounded-md border border-input-border hover:border-input-border-hover bg-background px-3 py-2 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 data-[state=open]:border-primary shadow-inner-bottom focus:outline-none group",
             error &&
               "border-error data-[state=open]:border-error hover:border-error",
             className,

@@ -2,8 +2,6 @@
 
 import { useRouter } from "next/navigation";
 
-import { useQueryClient } from "@tanstack/react-query";
-
 import {
   Button,
   Dialog,
@@ -13,9 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components";
-import { useAppMutation } from "@/hooks/use-app-mutation";
-import { toast } from "@/hooks/use-toast";
-import { snippetService } from "@/services/snippet.service";
+import { useDeleteSnippet } from "@/hooks/use-delete-snippet";
 
 interface DeleteSnippetDialogProps {
   open: boolean;
@@ -31,16 +27,9 @@ export const DeleteSnippetDialog = ({
   snippetTitle,
 }: DeleteSnippetDialogProps) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
 
-  const mutation = useAppMutation(["delete-snippet", snippetId], {
-    mutationFn: () => snippetService.remove(snippetId),
+  const mutation = useDeleteSnippet(snippetId, {
     onSuccess: () => {
-      toast({
-        title: "Snippet deleted successfully",
-        variant: "success",
-      });
-      queryClient.invalidateQueries({ queryKey: ["snippets"] });
       onOpenChange(false);
       router.push("/");
     },

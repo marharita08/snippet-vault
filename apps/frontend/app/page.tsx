@@ -14,6 +14,7 @@ import {
   Loading,
   SnippetCard,
   SnippetDialog,
+  TagsInput,
 } from "@/components";
 import { useSnippets } from "@/hooks/use-snippets";
 
@@ -21,6 +22,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const {
     data,
@@ -31,6 +33,7 @@ export default function Home() {
     fetchNextPage,
   } = useSnippets({
     search: debouncedSearch || undefined,
+    tags: selectedTags.length > 0 ? selectedTags : undefined,
   });
 
   const { ref: sentinelRef, inView } = useInView({ threshold: 0.1 });
@@ -50,14 +53,15 @@ export default function Home() {
   }, [search]);
 
   const snippets = data?.pages.flatMap((page) => page.data) ?? [];
-  const isSearchActive = debouncedSearch.length > 0;
+  const isSearchOrFilterActive =
+    debouncedSearch.length > 0 || selectedTags.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4 mb-8">
-          <div className="flex-1 max-w-md">
+          <div className="flex-1 flex gap-2 flex-col md:flex-row">
             <Input
               id="snippet-search"
               value={search}
@@ -65,6 +69,11 @@ export default function Home() {
               onClear={() => setSearch("")}
               startIcon={<Search className="h-4 w-4" />}
               placeholder="Search"
+            />
+            <TagsInput
+              values={selectedTags}
+              setValues={setSelectedTags}
+              placeholder="Filter by tags..."
             />
           </div>
           <Button
@@ -85,7 +94,7 @@ export default function Home() {
         {isError && !isLoading && <ErrorState />}
 
         {!isLoading && !isError && snippets.length === 0 && (
-          <EmptyState isSearchOrFilter={isSearchActive} />
+          <EmptyState isSearchOrFilter={isSearchOrFilterActive} />
         )}
 
         {!isLoading && !isError && snippets.length > 0 && (

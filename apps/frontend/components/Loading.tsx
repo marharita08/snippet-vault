@@ -102,4 +102,4 @@ const LoadingOverlay = React.forwardRef<HTMLDivElement, LoadingOverlayProps>(
 Loading.displayName = "Loading";
 LoadingOverlay.displayName = "LoadingOverlay";
 
-export { Loading, LoadingOverlay, loadingOverlayVariants,loadingVariants };
+export { Loading, LoadingOverlay, loadingOverlayVariants, loadingVariants };

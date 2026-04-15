@@ -1,7 +1,7 @@
 import { SnippetType } from "@/const/snippet-type";
 
 export type Snippet = {
-  id: string;
+  _id: string;
   title: string;
   content: string;
   tags: string[];

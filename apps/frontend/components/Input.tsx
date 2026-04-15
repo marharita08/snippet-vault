@@ -5,8 +5,10 @@ import { X } from "lucide-react";
 
 import { cn } from "@/utils/cn";
 
+import { Label } from "./Label";
+
 const inputVariants = cva(
-  "text-foreground flex w-full shadow-inner-bottom peer rounded-md bg-background px-3 py-2 text-base md:text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-offset-0",
+  "text-foreground flex w-full shadow-inner-bottom rounded-md bg-background px-3 py-2 text-base md:text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-offset-0",
   {
     variants: {
       variant: {
@@ -35,7 +37,6 @@ export interface InputProps
   onClear?: () => void;
   label?: string;
   labelClassName?: string;
-  isEmpty?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -54,7 +55,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       placeholder,
       label,
       labelClassName,
-      isEmpty = true,
       ...props
     },
     ref,
@@ -84,51 +84,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       }
     };
 
-    const inputElement = (
-      <div className="relative w-full">
-        <input
-          {...props}
-          id={id}
-          type={type}
-          className={cn(
-            inputVariants({ variant: actualVariant, size }),
-            startIcon && "pl-10",
-            showClearIcon && "pr-9",
-            className,
-          )}
-          ref={inputRef}
-          value={value}
-          disabled={disabled}
-          readOnly={readOnly}
-          placeholder={placeholder || " "}
-          aria-invalid={error}
-        />
-
+    return (
+      <div className="flex flex-col gap-1.5 w-full">
         {label && (
-          <label
-            htmlFor={id}
-            onClick={handleClick}
-            className={cn(
-              "absolute left-3 text-muted-foreground text-base md:text-base transition-all duration-200 bg-background px-1 cursor-text",
-              !placeholder &&
-                "peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2",
-              startIcon && "peer-placeholder-shown:left-9 ",
-              "peer-focus:left-5 peer-focus:top-[-0.6rem] peer-focus:translate-y-0 peer-focus:text-xs peer-focus:font-medium peer-focus:text-primary",
-              (value || !isEmpty || placeholder) &&
-                "top-[-0.6rem] translate-y-0 text-xs md:text-xs font-medium text-foreground left-5 h-[11px]",
-              labelClassName,
-              actualVariant === "error" && "text-error peer-focus:text-error",
-              disabled && "cursor-not-allowed opacity-50",
-            )}
-          >
+          <Label htmlFor={id} className={cn("cursor-pointer", labelClassName)}>
             {label}
-          </label>
+          </Label>
         )}
-      </div>
-    );
-
-    if (startIcon || showClearIcon) {
-      return (
         <div
           className={cn(
             "relative flex items-center focus-within:text-primary text-foreground w-full",
@@ -146,7 +108,23 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               {startIcon}
             </div>
           )}
-          {inputElement}
+          <input
+            {...props}
+            id={id}
+            type={type}
+            className={cn(
+              inputVariants({ variant: actualVariant, size }),
+              startIcon && "pl-10",
+              showClearIcon && "pr-9",
+              className,
+            )}
+            ref={inputRef}
+            value={value}
+            disabled={disabled}
+            readOnly={readOnly}
+            placeholder={placeholder}
+            aria-invalid={error}
+          />
           {showClearIcon && (
             <div className="absolute right-3 z-10 flex items-center gap-1">
               <button
@@ -160,10 +138,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
         </div>
-      );
-    }
-
-    return inputElement;
+      </div>
+    );
   },
 );
 

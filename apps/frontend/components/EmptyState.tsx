@@ -4,8 +4,8 @@ interface EmptyStateProps {
 
 export const EmptyState: React.FC<EmptyStateProps> = ({ isSearchOrFilter }) => {
   return (
-    <div>
-      <div>Snippets not found</div>
+    <div className="w-full flex items-center justify-center gap-2 flex-col">
+      <div className="font-semibold">Snippets not found</div>
       <div>
         {isSearchOrFilter
           ? "Try adjusting your search and filter"

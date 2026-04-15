@@ -29,7 +29,10 @@ export class SnippetService {
     const filter: Record<string, unknown> = {};
 
     if (search) {
-      filter.$text = { $search: search };
+      filter.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } },
+      ];
     }
 
     if (tags?.length) {

@@ -31,7 +31,5 @@ export class Snippet {
 
 export const SnippetSchema = SchemaFactory.createForClass(Snippet);
 
-SnippetSchema.index({
-  title: 'text',
-  content: 'text',
-});
+SnippetSchema.index({ title: 1 });
+SnippetSchema.index({ content: 1 });

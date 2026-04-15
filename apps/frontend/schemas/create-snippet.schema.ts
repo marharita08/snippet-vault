@@ -8,9 +8,15 @@ const snippetTypeValues = Object.values(SnippetType) as [
 ];
 
 export const createSnippetSchema = z.object({
-  title: z.string().min(1),
-  content: z.string().min(1),
-  type: z.enum(snippetTypeValues),
+  title: z.string().min(1, {
+    message: "Title is required",
+  }),
+  content: z.string().min(1, {
+    message: "Content is required",
+  }),
+  type: z.enum(snippetTypeValues, {
+    message: "Type is required",
+  }),
   tags: z.array(z.string()).optional(),
 });
 

@@ -3,19 +3,24 @@
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
-import { Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
-import { EmptyState } from "@/components/EmptyState";
-import { ErrorState } from "@/components/ErrorState";
-import { Header } from "@/components/Header";
-import { Input } from "@/components/Input";
-import { Loading } from "@/components/Loading";
-import { SnippetCard } from "@/components/SnippetCard";
+import {
+  Button,
+  EmptyState,
+  ErrorState,
+  Header,
+  Input,
+  Loading,
+  SnippetCard,
+  SnippetDialog,
+} from "@/components";
 import { useSnippets } from "@/hooks/use-snippets";
 
 export default function Home() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const {
     data,
@@ -51,16 +56,24 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <Input
-            id="snippet-search"
-            placeholder="Search snippets..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onClear={() => setSearch("")}
-            startIcon={<Search className="h-4 w-4" />}
-            label="Search"
-          />
+        <div className="flex items-center justify-between gap-4 mb-8">
+          <div className="flex-1 max-w-md">
+            <Input
+              id="snippet-search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onClear={() => setSearch("")}
+              startIcon={<Search className="h-4 w-4" />}
+              placeholder="Search"
+            />
+          </div>
+          <Button
+            onClick={() => setIsDialogOpen(true)}
+            className="shrink-0 rounded-full sm:rounded-md"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">Create Snippet</span>
+          </Button>
         </div>
 
         {isLoading && (
@@ -78,7 +91,7 @@ export default function Home() {
         {!isLoading && !isError && snippets.length > 0 && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {snippets.map((snippet) => (
-              <SnippetCard key={snippet.id} snippet={snippet} />
+              <SnippetCard key={snippet._id} snippet={snippet} />
             ))}
           </div>
         )}
@@ -90,6 +103,8 @@ export default function Home() {
         )}
 
         <div ref={sentinelRef} className="h-10" />
+
+        <SnippetDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
       </main>
     </div>
   );
